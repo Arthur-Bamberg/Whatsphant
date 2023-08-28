@@ -1,6 +1,7 @@
 version: '3'
 services:
   frontend:
+    container_name: frontend
     image: node:lts
     working_dir: /app
     volumes:
@@ -10,11 +11,28 @@ services:
     command: yarn dev
     depends_on:
       - backend
+    networks:
+      - whatsphant
 
   backend:
+    container_name: backend
     image: php:8.2.8-apache # You can choose the appropriate PHP version
     working_dir: /var/www/html
     volumes:
       - ./backend:/var/www/html
     ports:
       - "80:80" # Map host port to container port
+    networks:
+      - whatsphant
+  
+  db:
+    container_name: db
+    build:
+      context: ./_db
+      dockerfile: Dockerfile.bd
+    networks:
+      - whatsphant
+
+networks:
+  whatsphant:
+    driver: bridge
