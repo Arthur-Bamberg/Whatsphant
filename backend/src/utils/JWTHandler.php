@@ -1,10 +1,8 @@
 <?php
-require_once __DIR__ . '/../../vendor/autoload.php';
+namespace Util;
 
-require_once __DIR__ . '/globals.php';
-require_once __DIR__ . '/../dashboard/model/User.class.php';
-
-use \Firebase\JWT\JWT;
+use Model\User;
+use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class JWTHandler {
@@ -42,7 +40,7 @@ class JWTHandler {
         $decoded = JWT::decode($token, new Key($this->secretKey, $this->algorithm));
 
         if($decoded->data->iss != $_SERVER['HTTP_HOST']) {
-            throw new Exception('Invalid token issuer.');
+            throw new \Exception('Invalid token issuer.');
         }
 
         $result = $this->user->validateTokenData(

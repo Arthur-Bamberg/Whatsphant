@@ -1,7 +1,13 @@
 <?php
-require_once __DIR__ . '/../../services/PDOConnector.php';
-require_once __DIR__ . '/../model/Authentication.class.php';
-require_once __DIR__ . '/../model/User.class.php';
+namespace Service;
+
+require_once __DIR__ . '/../autoload.php';
+
+use Util\PDOConnector;
+use Model\{
+    Authentication,
+    User
+};
 
 header('Content-Type: application/json');
 
@@ -19,11 +25,11 @@ class UserService {
             $tokenValidation = self::$authentication->validateToken();
 
             if(!$tokenValidation->valid) {
-                throw new Exception('Invalid token.');
+                throw new \Exception('Invalid token.');
             }
 
             if(!$tokenValidation->data->isAdmin) {
-                throw new Exception('User is not admin.');
+                throw new \Exception('User is not admin.');
             }
 
             self::$users = new User(self::$pdo);
@@ -54,7 +60,7 @@ class UserService {
                     );
                     break;
             }
-        } catch(Exception $error) {
+        } catch(\Exception $error) {
             http_response_code(500);
 
             $response = [

@@ -1,8 +1,8 @@
 <?php
+namespace Model;
 
-require_once __DIR__ . '/../utils/globals.php';
-require_once __DIR__ . '/../utils/JWTHandler.php';
-require_once __DIR__ . '/User.class.php';
+use Util\JWTHandler;
+use Model\User;
 
 class Authentication {
     private $JWTHandler;
@@ -38,10 +38,10 @@ class Authentication {
             if ($token) {
                 return $this->JWTHandler->validateJWT($token);
             } else {
-                throw new Exception("Token not found in request.");
+                throw new \Exception("Token not found in request.");
             }
         } else {
-            throw new Exception("Authorization header not present in the request.");
+            throw new \Exception("Authorization header not present in the request.");
         }
     }
 }

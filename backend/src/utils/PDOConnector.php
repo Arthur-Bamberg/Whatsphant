@@ -1,5 +1,5 @@
 <?php
-require_once 'globals.php';
+namespace Util;
 
 class PDOConnector {
     private $pdo;
@@ -14,21 +14,25 @@ class PDOConnector {
         $dsn = "mysql:host=$host;dbname=$database;charset=utf8mb4";
 
         try {
-            $this->pdo = new PDO($dsn, $username, $password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            throw new Exception("Error connecting to database: " . $e->getMessage());
+            $this->pdo = new \PDO($dsn, $username, $password);
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        } catch (\PDOException $e) {
+            throw new \Exception("Error connecting to database: " . $e->getMessage());
         }
     }    
 
-    public function query($sql, $params = []) {
+    public function executeSQL($sql, $params) {
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             $this->stmt = $stmt;
-        } catch (PDOException $e) {
-            throw new Exception("Error executing query: " . $e->getMessage());
+        } catch (\PDOException $e) {
+            throw new \Exception("Error executing SQL: " . $e->getMessage());
         }
+    }
+
+    public function query($sql, $params = []) {
+        $this->executeSQL($sql, $params);
     }
 
     public function getLastInsertedId() {
@@ -36,10 +40,14 @@ class PDOConnector {
     }
 
     public function getModelResult($class) {
-        return $this->stmt->fetchAll(PDO::FETCH_CLASS, $class);
+        return $this->stmt->fetchAll(\PDO::FETCH_CLASS, $class);
     }
 
     public function getResult() {
-        return $this->stmt->fetchAll(PDO::FETCH_OBJ);
+        return $this->stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+    public function getSingleResult() {
+        return $this->stmt->fetch(\PDO::FETCH_OBJ);
     }
 }

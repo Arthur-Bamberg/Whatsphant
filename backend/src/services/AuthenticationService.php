@@ -1,6 +1,10 @@
 <?php
-require_once __DIR__ . '/../../services/PDOConnector.php';
-require_once __DIR__ . '/../model/Authentication.class.php';
+namespace Service;
+
+require_once __DIR__ . '/../autoload.php';
+
+use Model\Authentication;
+use Util\PDOConnector;
 
 header('Content-Type: application/json');
 
@@ -14,7 +18,7 @@ class AuthenticationService {
             self::$authentication = new Authentication(self::$pdo);
 
             $response = self::$authentication->authenticate();
-        } catch (Exception $error) {
+        } catch (\Exception $error) {
             http_response_code(401);
 
             $response = [

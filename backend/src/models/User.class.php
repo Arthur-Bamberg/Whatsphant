@@ -1,5 +1,6 @@
 <?php
 
+namespace Model;
 class User {
     private $pdo;
 
@@ -9,15 +10,15 @@ class User {
 
     public function create($name, $email, $password) {
         if(empty($name)) {
-            throw new Exception("Empty name.");
+            throw new \Exception("Empty name.");
         }
 
         if(!$this->isValidEmail($email)) {
-            throw new Exception("Invalid email address.");
+            throw new \Exception("Invalid email address.");
         }
 
         if(!$this->isValidPassword($password)) {
-            throw new Exception("Invalid password.");
+            throw new \Exception("Invalid password.");
         }
 
         $this->pdo->executeSQL(
@@ -53,7 +54,7 @@ class User {
 
     public function update($idUser, $password) {
         if(!$this->isValidPassword($password)) {
-            throw new Exception("Invalid password.");
+            throw new \Exception("Invalid password.");
         }
 
         $this->pdo->executeSQL(
@@ -88,14 +89,6 @@ class User {
     }
 
     public function validateLogin($email, $password) {
-        if(!$this->isValidEmail($email)) {
-            throw new Exception("Invalid email address.");
-        }
-
-        if(!$this->isValidPassword($password)) {
-            throw new Exception("Invalid password.");
-        }
-
         $this->pdo->query(
             "SELECT 
                 idUser,
@@ -111,12 +104,12 @@ class User {
             )
         );
 
-        $result = $this->pdo->getResult();
+        $result = $this->pdo->getSingleResult();
 
-        if($result) {
-            return (object) $this->pdo->getResult();
+        if(!empty($result)) {
+            return $result;
         } else {
-            throw new Exception('Invalid email or password.');
+            throw new \Exception('Invalid email or password.');
         }
     }
 
@@ -159,7 +152,7 @@ class User {
         if($result) {
             return (object) $this->pdo->getResult();
         } else {
-            throw new Exception('Invalid token data.');
+            throw new \Exception('Invalid token data.');
         }
     }
 
