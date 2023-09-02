@@ -3,7 +3,10 @@ namespace Service;
 
 require_once __DIR__ . '/../autoload.php';
 
-use Util\PDOConnector;
+use Util\{
+    ServiceTrait,
+    PDOConnector
+};
 use Model\{
     Authentication,
     User
@@ -12,6 +15,8 @@ use Model\{
 header('Content-Type: application/json');
 
 class UserService {
+    use ServiceTrait;
+
     private static $pdo;
     private static $authentication;
     private static $users;
@@ -36,10 +41,14 @@ class UserService {
 
             switch($_SERVER['REQUEST_METHOD']) {
                 case 'POST':
+                    $params = ['name', 'email', 'password'];
+
+                    extract(self::validateParams($params, true));
+
                     $response = self::$users->create(
-                        $_POST['name'],
-                        $_POST['email'],
-                        $_POST['password']
+                        $name,
+                        $email,
+                        $password
                     );
                     break;
 
@@ -48,15 +57,23 @@ class UserService {
                     break;
 
                 case 'PUT':
+                    $params = ['idUser', 'password'];
+
+                    extract(self::validateParams($params));
+
                     $response = self::$users->update(
-                        $_GET['idUser'],
-                        $_GET['password']
+                        $idUser,
+                        $password
                     );
                     break;
 
                 case 'DELETE':
+                    $params = ['idUser'];
+
+                    extract(self::validateParams($params));
+
                     $response = self::$users->delete(
-                        $_GET['idUser']
+                        $idUser
                     );
                     break;
             }

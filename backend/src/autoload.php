@@ -7,6 +7,7 @@ spl_autoload_register(function ($class) {
 
     $namespaceMap = [
         'Model' => 'models/',
+        'Controller' => 'controllers/',
         'Service' => 'services/',
         'Util' => 'utils/'
     ];

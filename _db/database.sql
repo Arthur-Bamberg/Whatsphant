@@ -19,18 +19,22 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `idChat` int(11) NOT NULL AUTO_INCREMENT,
   `FK_idUser1` int(11) DEFAULT NULL,
   `FK_idUser2` int(11) DEFAULT NULL,
+  `FK_idLastMessage` int(11) DEFAULT NULL,
   PRIMARY KEY (`idChat`),
   KEY `FK_idUser1` (`FK_idUser1`),
   KEY `FK_idUser2` (`FK_idUser2`),
+  KEY `FK_idLastMessage` (`FK_idLastMessage`),
+  CONSTRAINT `FK_idLastMessage` FOREIGN KEY (`FK_idLastMessage`) REFERENCES `message` (`idMessage`),
   CONSTRAINT `FK_idUser1` FOREIGN KEY (`FK_idUser1`) REFERENCES `user` (`idUser`),
   CONSTRAINT `FK_idUser2` FOREIGN KEY (`FK_idUser2`) REFERENCES `user` (`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- Dumping data for table whatsphant.chat: ~0 rows (approximately)
 
 -- Dumping structure for table whatsphant.message
 CREATE TABLE IF NOT EXISTS `message` (
   `idMessage` int(11) NOT NULL AUTO_INCREMENT,
+  `content` varchar(255) NOT NULL,
   `FK_idChat` int(11) DEFAULT NULL,
   `FK_idUser` int(11) DEFAULT NULL,
   `isActive` tinyint(3) unsigned DEFAULT '1',
@@ -42,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   CONSTRAINT `FK_idUser` FOREIGN KEY (`FK_idUser`) REFERENCES `user` (`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Data exporting was unselected.
+-- Dumping data for table whatsphant.message: ~0 rows (approximately)
 
 -- Dumping structure for table whatsphant.user
 CREATE TABLE IF NOT EXISTS `user` (
@@ -55,9 +59,11 @@ CREATE TABLE IF NOT EXISTS `user` (
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
   `isActive` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
--- Data exporting was unselected.
+-- Dumping data for table whatsphant.user: ~1 rows (approximately)
+INSERT INTO `user` (`idUser`, `email`, `name`, `password`, `issuedAt`, `expirationTime`, `isAdmin`, `isActive`) VALUES
+	(1, 'admin', 'admin', '0c7540eb7e65b553ec1ba6b20de79608', '2023-08-28 20:32:44', '2023-08-28 20:52:44', 1, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
