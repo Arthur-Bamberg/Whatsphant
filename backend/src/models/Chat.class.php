@@ -2,7 +2,10 @@
 
 namespace Model;
 
-use Model\User;
+use Model\{
+    User,
+    Message
+};
 
 class Chat {
     private $pdo;
@@ -53,9 +56,15 @@ class Chat {
             FROM 
                 chat
             WHERE 
-                idChat = :idChat",
+                idChat = :idChat
+                AND (
+                    FK_idUser1 = :thisIdUser1
+                    OR FK_idUser2 = :thisIdUser2
+                )",
             array(
-                ':idChat' => $this->idChat
+                ':idChat' => $this->idChat,
+                ':thisIdUser1' => $this->thisIdUser,
+                ':thisIdUser2' => $this->thisIdUser
             )
         );
 
@@ -66,6 +75,30 @@ class Chat {
         }
 
         return $result;
+    }
+
+    public static function getStatic($pdo, $idChat, $thisIdUser) {
+        $pdo->query(
+            "SELECT 
+                idChat,
+                FK_idUser1 as thisIdUser,
+                FK_idUser2 as otherIdUser
+            FROM 
+                chat
+            WHERE 
+                idChat = :idChat
+                AND (
+                    FK_idUser1 = :thisIdUser1
+                    OR FK_idUser2 = :thisIdUser2
+                )",
+            array(
+                ':idChat' => $idChat,
+                ':thisIdUser1' => $thisIdUser,
+                ':thisIdUser2' => $thisIdUser
+            )
+        );
+
+        return $pdo->getSingleResult();
     }
 
     private function getByUsers() {
@@ -98,6 +131,17 @@ class Chat {
 
     public function delete() {
         $this->pdo->executeSQL(
+            "UPDATE chat 
+                SET FK_idLastMessage = NULL
+                WHERE idChat = :idChat",
+            array(
+                ':idChat' => $this->idChat
+            )
+        );
+
+        Message::deleteByChat($this->pdo, $this->idChat);
+
+        $this->pdo->executeSQL(
             "DELETE FROM chat 
                 WHERE idChat = :idChat",
             array(
@@ -119,6 +163,8 @@ class Chat {
                 message.idMessage,
                 message.content,
                 message.updatedOn,
+                message.createdOn,
+                (message.updatedOn <> message.createdOn) as edited,
 
                 user.name as userName
 
@@ -132,12 +178,13 @@ class Chat {
                 ON user.idUser = message.FK_idUser
 
             WHERE 
-                message.FK_idChat = :idChat
+                message.isActive = 1
+                AND message.FK_idChat = :idChat
+
                 AND (
                     chat.FK_idUser1 = :thisIdUser1
                     OR chat.FK_idUser2 = :thisIdUser2
                 )
-
 
             ORDER BY message.createdOn ASC",
             [
@@ -206,6 +253,37 @@ class Chat {
         );
 
         return $pdo->getResult();
+    }
+
+    public static function updateLastMessage($pdo, $idChat, $idLastMessage = NULL) {
+        if(!empty($idLastMessage)) {
+            $pdo->executeSQL(
+                "UPDATE chat 
+                    SET FK_idLastMessage = :idMessage
+                    WHERE idChat = :idChat",
+                array(
+                    ':idMessage' => $idLastMessage,
+                    ':idChat' => $idChat
+                )
+            );
+        } else {
+            $pdo->executeSQL(
+                "UPDATE chat 
+                    SET FK_idLastMessage = (
+                        SELECT idMessage
+                        FROM message
+                        WHERE 
+                            FK_idChat = :idChat
+                            AND message.isActive = 1
+                        ORDER BY createdOn DESC
+                        LIMIT 1
+                    )
+                    WHERE idChat = :idChat",
+                array(
+                    ':idChat' => $idChat
+                )
+            );
+        }
     }
 
     public function __get($name) {

@@ -2,16 +2,16 @@
 
 namespace Model;
 
+use Model\Chat;
 class Message {
     private $pdo;
-    private $idMessage;
+    private int $idMessage;
     private $content;
-    private $idChat;
-    private $idUser;
+    private int $idChat;
+    private int $idUser;
 
-    public function __construct($pdo, $idChat, $idUser) {
+    public function __construct($pdo, $idUser) {
         $this->pdo = $pdo;
-        $this->idChat = $idChat;
         $this->idUser = $idUser;
     }
 
@@ -28,6 +28,8 @@ class Message {
 
         $this->idMessage = $this->pdo->getLastInsertedId();
 
+        Chat::updateLastMessage($this->pdo, $this->idChat, $this->idMessage);
+
         return [
             'idMessage' => $this->idMessage,
             'content' => $this->content,
@@ -39,17 +41,27 @@ class Message {
     public function get() {
         $this->pdo->query(
             "SELECT 
-                idMessage,
-                content,
-                FK_idChat,
-                FK_idUser,
-                isActive
+                message.idMessage,
+                message.content,
+                message.FK_idChat,
+                message.FK_idUser,
+                message.isActive
             FROM 
                 message
+
+                INNER JOIN chat 
+                    ON message.FK_idChat = chat.idChat
+
+                INNER JOIN user
+                    ON chat.FK_idUser1 = user.idUser OR chat.FK_idUser2 = user.idUser
+
             WHERE 
-                idMessage = :idMessage",
+                message.idMessage = :idMessage
+                AND message.isActive = 1
+                AND user.idUser = :idUser",
             array(
-                ':idMessage' => $this->idMessage
+                ':idMessage' => $this->idMessage,
+                ':idUser' => $this->idUser
             )
         );
 
@@ -83,10 +95,28 @@ class Message {
             )
         );
 
+        Chat::updateLastMessage($this->pdo, $this->idChat);
+
         return [
             'idMessage' => $this->idMessage,
             'isActive' => 0
         ];
+    }
+
+    public static function deleteByChat($pdo, $idChat) {
+        $pdo->executeSQL(
+            "DELETE FROM message
+                WHERE FK_idChat = :idChat",
+            array(
+                ':idChat' => $idChat
+            )
+        );
+    }
+
+    private function validateIdChat() {
+        if(empty(Chat::getStatic($this->pdo, $this->idChat, $this->idUser))) {
+            throw new \Exception('Chat not found.', 404);
+        }
     }
 
     public function __get($name) {
@@ -99,7 +129,13 @@ class Message {
 
     public function __set($name, $value) {
         if(array_key_exists($name, get_class_vars(get_class($this)))) {
-            $this->$name = $value;
+            if($name == 'idChat') {
+                $this->idChat = $value;
+
+                $this->validateIdChat();
+            } else {
+                $this->$name = $value;
+            }
         } else {
             throw new \Exception("Property '$name' does not exist.");
         }
