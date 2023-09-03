@@ -33,14 +33,14 @@ class UserService {
                 throw new \Exception('Invalid token.');
             }
 
-            if(!$tokenValidation->data->isAdmin) {
-                throw new \Exception('User is not admin.');
-            }
-
             self::$users = new User(self::$pdo);
 
             switch($_SERVER['REQUEST_METHOD']) {
                 case 'POST':
+                    if(!$tokenValidation->data->isAdmin) {
+                        throw new \Exception('User is not admin.');
+                    }
+
                     $params = ['name', 'email', 'password'];
 
                     extract(self::validateParams($params, true));
@@ -57,7 +57,13 @@ class UserService {
                     break;
 
                 case 'PUT':
-                    $params = ['idUser', 'password'];
+                    $idUser = self::getUriParameter();
+
+                    if(!$tokenValidation->data->isAdmin && $tokenValidation->data->idUser != $idUser) {
+                        throw new \Exception('User is unauthorized to do this action.', 403);
+                    }
+
+                    $params = ['password'];
 
                     extract(self::validateParams($params));
 
@@ -68,9 +74,11 @@ class UserService {
                     break;
 
                 case 'DELETE':
-                    $params = ['idUser'];
+                    $idUser = self::getUriParameter();
 
-                    extract(self::validateParams($params));
+                    if(!$tokenValidation->data->isAdmin && $tokenValidation->data->idUser != $idUser) {
+                        throw new \Exception('User is unauthorized to do this action.', 403);
+                    }
 
                     $response = self::$users->delete(
                         $idUser
@@ -78,11 +86,16 @@ class UserService {
                     break;
             }
         } catch(\Exception $error) {
-            http_response_code(500);
+            if(!empty($error->getCode())) {
+                $code = $error->getCode();
+            } else {
+                $code = 500;
+            }
+
+            http_response_code($code);
 
             $response = [
-                'error' => 'Internal Server Error',
-                'message' => $error->getMessage()
+                'error' => $error->getMessage()
             ];
         } finally {
             echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

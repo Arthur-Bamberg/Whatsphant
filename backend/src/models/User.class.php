@@ -32,7 +32,7 @@ class User {
         );
 
         return [
-            'idUser' => $this->pdo->getLastInsertId(),
+            'idUser' => $this->pdo->getLastInsertedId(),
             'name' => $name,
             'email' => $email
         ];
@@ -42,14 +42,16 @@ class User {
         $this->pdo->query(
             "SELECT 
                 idUser, 
-                name, 
-                email, 
-                isActive 
+                name
             FROM user
+
+            WHERE
+                user.isActive = 1
+                AND user.isAdmin = 0
             ORDER BY name ASC"
         );
 
-        return $this->pdo->getResultArray();
+        return $this->pdo->getResult();
     }
 
     public function update($idUser, $password) {
@@ -147,12 +149,12 @@ class User {
             )
         );
 
-        $result = $this->pdo->getResult();
+        $result = $this->pdo->getSingleResult();
 
         if($result) {
-            return (object) $this->pdo->getResult();
+            return $result;
         } else {
-            throw new \Exception('Invalid token data.');
+            throw new \Exception('Invalid token data.', 403);
         }
     }
 

@@ -3,13 +3,18 @@ namespace Service;
 
 require_once __DIR__ . '/../autoload.php';
 
-use Util\PDOConnector;
+use Util\{
+    ServiceTrait,
+    PDOConnector
+};
 use Model\Authentication;
 use Controller\ChatController;
 
 header('Content-Type: application/json');
 
 class ChatService {
+    use ServiceTrait;
+
     private static $pdo;
     private static $authentication;
     private static $chatController;
@@ -30,15 +35,15 @@ class ChatService {
 
             switch($_SERVER['REQUEST_METHOD']) {
                 case 'POST':
-                    $response = self::$chatController->create();
+                    $params = ['thisIdUser', 'otherIdUser'];
+
+                    extract(self::validateParams($params, true));
+
+                    $response = self::$chatController->create($thisIdUser, $otherIdUser);
                     break;
 
                 case 'GET':
                     $response = self::$chatController->get();
-                    break;
-
-                case 'PUT':
-                    $response = self::$chatController->update();
                     break;
 
                 case 'DELETE':
