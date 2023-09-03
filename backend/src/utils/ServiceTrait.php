@@ -14,7 +14,7 @@ trait ServiceTrait {
 
         foreach($params as $param) {
             if(empty($method[$param])) {
-                throw new \Exception('Missing parameter: ' . $param);
+                throw new \Exception('Missing parameter: ' . $param, 400);
             }
 
             $response[$param] = $method[$param];
@@ -23,10 +23,19 @@ trait ServiceTrait {
         return $response;
     }
 
-    private static function getUriParameter() {
+    private static function getUriParameter($getLastTwoParameters = false) {
         $uri = $_SERVER['REQUEST_URI'];
 
         $uri = explode('/', $uri);
+
+        if($getLastTwoParameters) {
+            $return = [];
+            $return[] = $uri[count($uri) - 2];
+            $return[] = $uri[count($uri) - 1];
+
+            return $return;
+        }
+
         $uri = explode('?', end($uri));
 
         return $uri[0];

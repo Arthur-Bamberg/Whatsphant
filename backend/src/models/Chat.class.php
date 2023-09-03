@@ -2,11 +2,13 @@
 
 namespace Model;
 
+use Model\User;
+
 class Chat {
     private $pdo;
-    private $idChat;
-    private $thisIdUser;
-    private $otherIdUser;
+    private int $idChat;
+    private int $thisIdUser;
+    private int $otherIdUser;
 
     public function __construct($pdo, $thisIdUser) {
         $this->pdo = $pdo;
@@ -14,6 +16,16 @@ class Chat {
     }
 
     public function save() {
+        if(empty(User::getById($this->pdo, $this->otherIdUser))) {
+            throw new \Exception('User does not exist.', 404);
+        }
+        
+        $chat = $this->getByUsers();
+
+        if(!empty($chat)) {
+            throw new \Exception('Chat already exists.', 409);
+        }
+
         $this->pdo->executeSQL(
             "INSERT INTO chat (FK_idUser1, FK_idUser2) 
                 VALUES (:thisIdUser, :otherIdUser)",
@@ -23,7 +35,7 @@ class Chat {
             )
         );
 
-        $this->idChat = $this->pdo->getLastInsertId();
+        $this->idChat = $this->pdo->getLastInsertedId();
 
         return [
             'idChat' => $this->idChat,
@@ -47,6 +59,40 @@ class Chat {
             )
         );
 
+        $result = $this->pdo->getSingleResult();
+
+        if(!empty($result)) {
+            $this->otherIdUser = $result->otherIdUser;
+        }
+
+        return $result;
+    }
+
+    private function getByUsers() {
+        $this->pdo->query(
+            "SELECT 
+                idChat,
+                FK_idUser1 as thisIdUser,
+                FK_idUser2 as otherIdUser
+            FROM 
+                chat
+            WHERE 
+                (
+                    FK_idUser1 = :thisIdUser1
+                    AND FK_idUser2 = :otherIdUser1
+                )
+                OR (
+                    FK_idUser1 = :otherIdUser2
+                    AND FK_idUser2 = :thisIdUser2
+                )",
+            array(
+                ':thisIdUser1' => $this->thisIdUser,
+                ':otherIdUser1' => $this->otherIdUser,
+                ':otherIdUser2' => $this->otherIdUser,
+                ':thisIdUser2' => $this->thisIdUser
+            )
+        );
+
         return $this->pdo->getSingleResult();
     }
 
@@ -58,6 +104,13 @@ class Chat {
                 ':idChat' => $this->idChat
             )
         );
+
+        return [
+            'idChat' => $this->idChat,
+            'thisIdUser' => $this->thisIdUser,
+            'otherIdUser' => $this->otherIdUser,
+            'deleted' => true
+        ];
     }
 
     public function getMessages() {

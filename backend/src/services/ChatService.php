@@ -31,31 +31,48 @@ class ChatService {
                 throw new \Exception('Invalid token.');
             }
 
-            self::$chatController = new ChatController(self::$pdo);
+            $thisIdUser = $tokenValidation->data->idUser;
+
+            self::$chatController = new ChatController(self::$pdo, $thisIdUser);
 
             switch($_SERVER['REQUEST_METHOD']) {
                 case 'POST':
-                    $params = ['thisIdUser', 'otherIdUser'];
+                    $params = ['otherIdUser'];
 
                     extract(self::validateParams($params, true));
 
-                    $response = self::$chatController->create($thisIdUser, $otherIdUser);
+                    $response = self::$chatController->create($otherIdUser);
                     break;
 
                 case 'GET':
-                    $response = self::$chatController->get();
+                    $uriParameters = self::getUriParameter(true);
+
+                    if(is_array($uriParameters) && end($uriParameters) == 'messages') {
+                        $idChat = $uriParameters[0];
+
+                        $response = self::$chatController->getMessagesFromChat($idChat);
+                    } else {
+                        $response = self::$chatController->get();
+                    }
                     break;
 
                 case 'DELETE':
-                    $response = self::$chatController->delete();
+                    $idChat = self::getUriParameter();
+
+                    $response = self::$chatController->delete($idChat);
                     break;
             }
         } catch(\Exception $error) {
-            http_response_code(500);
+            if(!empty($error->getCode())) {
+                $code = $error->getCode();
+            } else {
+                $code = 500;
+            }
+
+            http_response_code($code);
 
             $response = [
-                'error' => 'Internal Server Error',
-                'message' => $error->getMessage()
+                'error' => $error->getMessage()
             ];
         } finally {
             echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

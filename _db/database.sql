@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   `FK_idUser` int(11) DEFAULT NULL,
   `isActive` tinyint(3) unsigned DEFAULT '1',
   `updatedOn` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createdOn` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idMessage`),
   KEY `FK_idChat` (`FK_idChat`),
   KEY `FK_idUser` (`FK_idUser`),

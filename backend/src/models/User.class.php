@@ -54,6 +54,23 @@ class User {
         return $this->pdo->getResult();
     }
 
+    public static function getById($pdo, $idUser) {
+        $pdo->query(
+            "SELECT 
+                idUser, 
+                name
+            FROM user
+            WHERE
+                user.isActive = 1
+                AND idUser = :idUser",
+            array(
+                ':idUser' => $idUser
+            )
+        );
+
+        return $pdo->getSingleResult();
+    }
+
     public function update($idUser, $password) {
         if(!$this->isValidPassword($password)) {
             throw new \Exception("Invalid password.");
