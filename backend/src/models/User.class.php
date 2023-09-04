@@ -8,7 +8,7 @@ class User {
         $this->pdo = $pdo;
     }
 
-    public function create($name, $email, $password) {
+    public function create($name, $email, $password, $img) {
         if(empty($name)) {
             throw new \Exception("Empty name.");
         }
@@ -22,19 +22,21 @@ class User {
         }
 
         $this->pdo->executeSQL(
-            "INSERT INTO user (name, email, password) 
-                VALUES (:name, :email, :password)",
+            "INSERT INTO user (name, email, password, imgPath) 
+                VALUES (:name, :email, :password, :img)",
             array(
                 ':name' => $name,
                 ':email' => $email,
-                ':password' => md5(sha1($password))
+                ':password' => md5(sha1($password)),
+                ':img' => $img
             )
         );
 
         return [
             'idUser' => $this->pdo->getLastInsertedId(),
             'name' => $name,
-            'email' => $email
+            'email' => $email,
+            'imgPath' => $img
         ];
     }
 

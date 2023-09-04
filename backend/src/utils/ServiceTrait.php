@@ -13,11 +13,19 @@ trait ServiceTrait {
         $response = [];
 
         foreach($params as $param) {
-            if(empty($method[$param])) {
-                throw new \Exception('Missing parameter: ' . $param, 400);
-            }
+            if($param == 'img' && empty($method[$param])) {
+                $response[$param] = 'https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png';
 
-            $response[$param] = $method[$param];
+            } else if($param == 'img') {
+                $response[$param] = self::convertBase64ToFile($method[$param]);
+
+            } else {
+                if(empty($method[$param])) {
+                    throw new \Exception('Missing parameter: ' . $param, 400);
+                }
+
+                $response[$param] = $method[$param];
+            }
         }
 
         return $response;
@@ -39,5 +47,23 @@ trait ServiceTrait {
         $uri = explode('?', end($uri));
 
         return $uri[0];
+    }
+
+    private static function convertBase64ToFile($imgBase64) {
+        $imgBase64 = explode(',', $imgBase64);
+
+        $imgBase64 = end($imgBase64);
+
+        $imgBase64 = str_replace(' ', '+', $imgBase64);
+
+        $imgBase64 = base64_decode($imgBase64);
+
+        $imgName = md5(uniqid(rand(), true)) . '.png';
+
+        $imgPath = __DIR__ . '/../uploads/' . $imgName;
+
+        file_put_contents($imgPath, $imgBase64);
+
+        return $imgPath;
     }
 }

@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `email` varchar(255) NOT NULL,
   `name` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `imgPath` varchar(255) DEFAULT NULL,
   `issuedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expirationTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',

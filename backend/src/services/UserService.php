@@ -41,14 +41,15 @@ class UserService {
                         throw new \Exception('User is not admin.');
                     }
 
-                    $params = ['name', 'email', 'password'];
+                    $params = ['name', 'email', 'password', 'img'];
 
                     extract(self::validateParams($params, true));
 
                     $response = self::$users->create(
                         $name,
                         $email,
-                        $password
+                        $password,
+                        $img
                     );
                     break;
 

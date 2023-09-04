@@ -207,6 +207,7 @@ class Chat {
                         chat.FK_idUser2 as otherIdUser,
 
                         user.name as title,
+                        user.imgPath as imgPath,
 
                         message.content as lastMessage,
                         message.updatedOn
