@@ -13,9 +13,9 @@ Message application in PHP
 
 - Envio de imagens ou músicas
 
-- Armazenar imagens de forma segura (banco ou arquivo)
+- Armazenar imagens de forma segura (banco ou arquivo) ✅
 
-- Armazenar imagens de forma otimizada (arquivo)
+- Armazenar imagens de forma otimizada (arquivo) ✅
 
 - Utilizar SPA no sistema privado
 
