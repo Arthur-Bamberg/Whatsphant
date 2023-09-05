@@ -5,7 +5,7 @@ services:
     image: php:8.2.8-apache # You can choose the appropriate PHP version
     working_dir: /var/www/html
     volumes:
-      - ./backend:/var/www/html
+      - ./backend/src:/var/www/html/Whatsphant
     ports:
       - "8081:80" # Map host port to container port
     networks:

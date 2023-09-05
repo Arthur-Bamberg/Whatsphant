@@ -10,7 +10,10 @@ use Util\{
 use Model\Authentication;
 use Controller\MessageController;
 
-header('Content-Type: application/json');
+header("Access-Control-Allow-Origin: http://localhost:5000");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json");
 
 class ChatService {
     use ServiceTrait;

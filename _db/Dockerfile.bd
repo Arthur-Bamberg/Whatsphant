@@ -6,5 +6,3 @@ RUN mkdir -p /var/database
 
 # Copy the database.sql file from the host into the container
 COPY ./database.sql /var/database/
-
-RUN mysql --user=root --password=root whatsphant < /var/database/database.sql
