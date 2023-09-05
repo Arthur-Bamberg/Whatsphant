@@ -1,8 +1,10 @@
 version: '3'
 services:
   backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.backend
     container_name: backend
-    image: php:8.2.8-apache # You can choose the appropriate PHP version
     working_dir: /var/www/html
     volumes:
       - ./backend/src:/var/www/html/Whatsphant
@@ -13,13 +15,8 @@ services:
   
   db:
     container_name: db
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_ALLOW_EMPTY_PASSWORD=false
-      - MYSQL_RANDOM_ROOT_PASSWORD=false
-      - MYSQL_DATABASE=whatsphant
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=secret
+    env_file:
+      - ./_db/.env
     build:
       context: ./_db
       dockerfile: Dockerfile.bd
