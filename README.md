@@ -21,4 +21,4 @@ Message application in PHP
 
 - Utilizar um editor de HTML
 
-- Utilizar datas e Timezone
+- Utilizar datas e Timezone ✅

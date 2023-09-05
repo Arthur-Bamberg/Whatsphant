@@ -16,6 +16,7 @@ class PDOConnector {
         try {
             $this->pdo = new \PDO($dsn, $username, $password);
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo->exec("set time_zone = 'America/Sao_Paulo'");
         } catch (\PDOException $e) {
             throw new \Exception("Error connecting to database: " . $e->getMessage());
         }
