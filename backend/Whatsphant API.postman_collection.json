@@ -1,0 +1,479 @@
+{
+	"info": {
+		"_postman_id": "be955abe-324e-40a4-9d8c-06fbce20bc1b",
+		"name": "Whatsphant API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26331696"
+	},
+	"item": [
+		{
+			"name": "Authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"if(jsonData.token) {\r",
+							"    pm.globals.set(\"WPToken\", jsonData.token);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/AuthenticationService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"AuthenticationService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Arthur Bamberg",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "bamberguisses@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Bolas*123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/UserService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"UserService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create chat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "otherIdUser",
+							"value": "3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/ChatService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"ChatService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idChat",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "second message",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/MessageService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"MessageService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idChat",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "second message",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/MessageService.php/8?content=first message changed",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"MessageService.php",
+						"8"
+					],
+					"query": [
+						{
+							"key": "content",
+							"value": "first message changed"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete message",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "idChat",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "second message",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/Whatsphant/services/MessageService.php/9",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"MessageService.php",
+						"9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get chats",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/ChatService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"ChatService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete chat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/ChatService.php/7",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"ChatService.php",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get messages from chat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/ChatService.php/{{idChat}}/messages",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"ChatService.php",
+						"{{idChat}}",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/UserService.php/{{idUser}}?password=Bigoflix*3000",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"UserService.php",
+						"{{idUser}}"
+					],
+					"query": [
+						{
+							"key": "password",
+							"value": "Bigoflix*3000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/UserService.php",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"UserService.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{WPToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost/Whatsphant/services/UserService.php/{{idUser}}",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"Whatsphant",
+						"services",
+						"UserService.php",
+						"{{idUser}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "idChat",
+			"value": "6"
+		}
+	]
+}
