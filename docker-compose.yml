@@ -1,19 +1,5 @@
 version: '3'
 services:
-  frontend:
-    container_name: frontend
-    image: node:lts
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-    ports:
-      - "3000:3000" # Map host port to container port
-    command: yarn dev
-    depends_on:
-      - backend
-    networks:
-      - whatsphant
-
   backend:
     container_name: backend
     image: php:8.2.8-apache # You can choose the appropriate PHP version
@@ -21,17 +7,39 @@ services:
     volumes:
       - ./backend:/var/www/html
     ports:
-      - "80:80" # Map host port to container port
+      - "8081:80" # Map host port to container port
     networks:
       - whatsphant
   
   db:
     container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=false
+      - MYSQL_RANDOM_ROOT_PASSWORD=false
+      - MYSQL_DATABASE=whatsphant
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
     build:
       context: ./_db
       dockerfile: Dockerfile.bd
+    volumes:
+      - dbdata:/var/lib/mysql
     networks:
       - whatsphant
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - whatsphant
+
+volumes: 
+  dbdata:
 
 networks:
   whatsphant:
