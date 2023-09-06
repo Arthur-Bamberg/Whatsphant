@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir ./storage
 
+RUN ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
+
 COPY --from=comp /var/www/html/vendor ./vendor
 COPY ./storage ./storage
-
+COPY ./httpd.conf /etc/apache2/conf-enabled/httpd.conf

@@ -1,8 +1,6 @@
 # Use the latest MySQL image as the base
 FROM mysql:latest
 
-# Create a directory in the container to hold the SQL file
-RUN mkdir -p /var/database
+COPY database.sql /docker-entrypoint-initdb.d/
 
-# Copy the database.sql file from the host into the container
-COPY ./database.sql /var/database/
+EXPOSE 3306
