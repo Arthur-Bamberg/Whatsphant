@@ -1,6 +1,9 @@
 # Whatsphant
 Message application in PHP
 
+## ATENÇÃO
+O Docker do banco de dados não está funcionando, então importe o banco para o seu MySQL
+
 ## Objetivos
 
 - Login e senha (usar salt ou password_hash do php) ✅
