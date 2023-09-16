@@ -7,6 +7,7 @@ class PDOConnector {
 
     public function __construct() {
         $host = constant('DB_HOST');
+        $port = constant('DB_PORT');
         $database = constant('DB_NAME');
         $username = constant('DB_USER');
         $password = constant('DB_PASS');

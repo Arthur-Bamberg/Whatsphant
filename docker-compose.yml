@@ -14,31 +14,6 @@ services:
     networks:
       - whatsphant
   
-  db:
-    container_name: db
-    env_file:
-      - ./_db/.env
-    build:
-      context: ./_db
-      dockerfile: Dockerfile.bd
-    volumes:
-      - dbdata:/var/lib/mysql
-    networks:
-      - whatsphant
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 8080:80
-    environment:
-      - PMA_ARBITRARY=1
-    networks:
-      - whatsphant
-
-volumes: 
-  dbdata:
-
 networks:
   whatsphant:
     driver: bridge
