@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { Common } from '../utils/Common';
 
 export class UserService {
-    userRoute = 'http://localhost:8081/whatsphant/users';
-    authRoute = 'http://localhost:8081/whatsphant/auth';
+    static userRoute = 'http://localhost:8081/whatsphant/users';
+    static authRoute = 'http://localhost:8081/whatsphant/auth';
 
     static async login(email, password) {
         try {
@@ -15,9 +16,13 @@ export class UserService {
                 }
             });
 
-            console.log(data);
+            Common.setCookie('WhatsphantJWT', data.token, 1);
+
+            return true;
         } catch (error) {
             console.error(error);
+
+            return false;
         }
     }
 }
