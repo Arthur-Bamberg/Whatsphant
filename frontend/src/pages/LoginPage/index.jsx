@@ -18,6 +18,8 @@ export const LoginPage = () => {
     event.preventDefault();
 
     await UserService.login(email, password);
+
+    window.location.href = '/contacts';
   };
 
   return (
